@@ -62,3 +62,6 @@ typings/
 
 # file Mac Store
 .DS_Store
+
+#package-lock.json
+package-lock.json
