@@ -3,9 +3,10 @@ window.onload = localStorage.clear();
 const $app = document.getElementById('app');
 const $observe = document.getElementById('observe');
 const API = 'https://rickandmortyapi.com/api/character/';
+let cont = 1;
 
 const getData = api => {
-  console.log("Entra en getData")
+  cont++
   fetch(api)
     .then(response => response.json())
     .then(response => {
@@ -13,8 +14,6 @@ const getData = api => {
       localStorage.setItem('next_fetch', info.next);
       localStorage.setItem('pages', info.pages)
       const characters = response.results;
-      console.log(localStorage)
-
       let output = characters.map(character => {
         return `
       <article class="Card">
@@ -31,15 +30,24 @@ const getData = api => {
     .catch(error => console.log(error));
 }
 
+function endData() {
+  let message = document.createTextNode('Ya ho hay mas personajes...');
+  let newItem = document.createElement('section');
+  let newh2 = document.createElement('h2');
+  newItem.classList.add('Items');
+  newh2.appendChild(message);
+  newItem.appendChild(newh2);
+  $app.appendChild(newItem);
+}
+
 const loadData = async() => {
-  console.log("Entra en loadData")
-  console.log(localStorage)
   try {
-    if (localStorage.getItem('next_fetch') != null) {
+    if ((localStorage.getItem('next_fetch') != null) && (cont <= localStorage.getItem('pages'))) {
       let myNextUrl = localStorage.getItem('next_fetch')
       await getData(myNextUrl)
     } else if (localStorage.getItem('next_fetch') === "") {
-      console.log("Ya no hay personajes")
+      await endData();
+      intersectionObserver.unobserve($observe);
     } else {
       await getData(API);
     }
@@ -48,7 +56,7 @@ const loadData = async() => {
   }
 }
 
-function onError(error, nameFunction) {
+function onError(error) {
   console.log(`Ocurrio el sigueinte error: ${error}`);
 }
 
